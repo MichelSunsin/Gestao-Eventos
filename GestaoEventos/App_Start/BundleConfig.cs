@@ -25,6 +25,14 @@ namespace GestaoEventos
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            #region AgendaCRM
+            bundles.Add(new ScriptBundle("~/bundles/agenda").Include(
+                "~/Scripts/Controllers/agenda-controller.js",
+                "~/Scripts/Fullcalendar/fullcalendar.min.js",
+                "~/Scripts/Fullcalendar/Locale/pt-br.js"
+            ));
+            #endregion
         }
     }
 }
