@@ -1115,15 +1115,14 @@
         /* Fim Modal Evento ------------------------------*/
 
         _private.CarregarAgenda = () => {
-            let initialLocaleCode = 'pt-br';
             $('#field_agenda').fullCalendar({
                 header: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 },
-                locale: initialLocaleCode,
-                timezone: 'local',
+                locale: 'pt-br',
+                timezone: 'pt-br',
                 buttonIcons: {
                     prev: 'left-single-arrow',
                     next: 'right-single-arrow',
@@ -1153,19 +1152,19 @@
                     switch (parseInt(evento.StatusCompromisso)) {
                         case 1:
                             {
-                                element.find(".fc-title").prepend("<i class='fa fa-" + "calendar" + "'></i> ");
+                                element.find(".fc-title").prepend("<i class='fa fa-calendar'></i> ");
                                 statusCompromisso = "Aberto";
                                 break;
                             }
                         case 2:
                             {
-                                element.find(".fc-title").prepend("<i class='fa fa-" + "check" + "'></i> ");
+                                element.find(".fc-title").prepend("<i class='fa fa-check'></i> ");
                                 statusCompromisso = "Concluído";
                                 break;
                             }
                         case 3:
                             {
-                                element.find(".fc-title").prepend("<i class='fa fa-" + "check" + "'></i> ");
+                                element.find(".fc-title").prepend("<i class='fa fa-check'></i> ");
                                 statusCompromisso = "Cancelado";
                                 break;
                             }

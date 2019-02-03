@@ -9,7 +9,8 @@ namespace GestaoEventos
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery-ui.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -26,9 +27,11 @@ namespace GestaoEventos
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-            #region AgendaCRM
+            #region Agenda
             bundles.Add(new ScriptBundle("~/bundles/agenda").Include(
+                "~/Scripts/bootbox.min.js",
                 "~/Scripts/Controllers/agenda-controller.js",
+                "~/Scripts/moment.min.js",
                 "~/Scripts/Fullcalendar/fullcalendar.min.js",
                 "~/Scripts/Fullcalendar/Locale/pt-br.js"
             ));

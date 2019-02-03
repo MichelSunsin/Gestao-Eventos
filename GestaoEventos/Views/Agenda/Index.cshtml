@@ -3,8 +3,7 @@
     ViewBag.Title = "Agenda";
 }
 
-<link href="~/Content/fullcalendar.min.css" rel="stylesheet" />
-<link href="~/Content/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="~/Content/Fullcalendar/fullcalendar.min.css" rel="stylesheet" />
 
 <section class="main-content">
     <div class="row">
@@ -12,14 +11,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
                     <h4 style="border-bottom: 1px solid #eff2f7">Colaboradores</h4>
-                    <br />
                     <div id="selecionar-todos-container" class="row" style="display:none">
                         <div class="col-md-12 text-center no-padding">
                             <div id="editCheckboxTodos"></div>
                         </div>
-                        @*<div class="col-md-9" style="padding-top: 4px;padding-left: 0px;padding-right: 70px">
-                                <span class="none">Selecionar todos</span>
-                            </div>*@
                     </div>
                 </div>
                 <div class="panel-body">
@@ -29,23 +24,21 @@
         </div>
         <div id="containerAgenda" class="col-md-9">
             <div class="panel panel-default">
-                <div class="panel-heading"></div>
                 <div class="panel-body">
-                    <div class="row">
-                        <div id="field_agenda" />
-                    </div>
+                    <div id="field_agenda" />
                 </div>
             </div>
         </div>
     </div>
 </section>
 @*<script>
-    var visualizaTodosEventos = '@ViewBag.VisualizaTodosEventos' === 'True';
-    var mensagens = @Html.Raw(Json.Encode(Model.Mensagens));
-    var labels = @Html.Raw(Json.Encode(Model.Labels));
-    var tabela = @Html.Raw(Json.Encode(Model.Tabela));
-    var palavrasDateTimePicker = @Html.Raw(Json.Encode(Model.DateTimePicker));
-</script>*@
+        var visualizaTodosEventos = '@ViewBag.VisualizaTodosEventos' === 'True';
+        var mensagens = @Html.Raw(Json.Encode(Model.Mensagens));
+        var labels = @Html.Raw(Json.Encode(Model.Labels));
+        var tabela = @Html.Raw(Json.Encode(Model.Tabela));
+        var palavrasDateTimePicker = @Html.Raw(Json.Encode(Model.DateTimePicker));
+    </script>*@
+
 @section Scripts{
     @Scripts.Render("~/bundles/agenda")
 }
