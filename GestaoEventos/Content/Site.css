@@ -22,3 +22,13 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.center {
+    margin: 0 auto;
+    width: 40%;
+}
+
+.invisibleNone {
+    display: none;
+}
+

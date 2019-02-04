@@ -27,6 +27,13 @@ namespace GestaoEventos
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
+            #region Home
+            bundles.Add(new ScriptBundle("~/bundles/home").Include(
+                "~/Scripts/Controllers/ajax-controller.js",
+                "~/Scripts/Controllers/home-controller.js"
+            ));
+            #endregion
+
             #region Agenda
             bundles.Add(new ScriptBundle("~/bundles/agenda").Include(
                 "~/Scripts/bootbox.min.js",

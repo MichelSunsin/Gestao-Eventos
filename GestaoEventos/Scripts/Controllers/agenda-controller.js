@@ -1212,6 +1212,10 @@
         };
 
         /* Métodos públicos */
+        _public.ToggleCadastro = () => {
+            console.log("funfou");
+        };
+
         _public.Initialize = function () {
             //_private.CarregarParametros();
             //_private.ObterTitulos();
