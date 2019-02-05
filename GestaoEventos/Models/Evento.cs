@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestaoEventos.Models
 {
+    [Table("Evento")]
     public class Evento
     {
         public long Id { get; set; }

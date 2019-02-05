@@ -15,21 +15,28 @@ namespace GestaoEventos.Controllers
     /// <summary>
     /// Summary Placeholder
     /// </summary>
-    //[RoutePrefix("api/Usuarios")]
+    [RoutePrefix("api/Usuario")]
     public class UsuariosController : ApiController
     {
         private GestaoEventosContext db = new GestaoEventosContext();
 
-        // GET: api/Usuarios
-        [HttpGet]
-        [Route("api/NotificationAPI")]
-        public List<Usuario> ObterUsuariosPorLogin(long Id)
+        [HttpPost]
+        [Route("CadastrarNovoUsuario")]
+        public string CadastrarNovoUsuario(Usuario usuario)
         {
-            //using (db)
-            //{
-            //    db.Usuarios.SqlQuery()
-            //}
-            return db.Usuarios.ToList();
+            try
+            {
+                if (db.Usuarios.Count(x => x.Login.Contains(usuario != null? usuario.Login : "")) > 0)
+                {
+                    throw new Exception("E-mail informado já cadastrado.");
+                }
+                return "Usuário cadastrado com sucesso";
+            }
+            catch (Exception e)
+            {
+
+                return (e.Message);
+            }
         }
 
         //// GET: api/Usuarios/5
@@ -81,19 +88,19 @@ namespace GestaoEventos.Controllers
         //}
 
         //// POST: api/Usuarios
-        [ResponseType(typeof(Usuario))]
-        public IHttpActionResult PostObter(Usuario usuario)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[ResponseType(typeof(Usuario))]
+        //public IHttpActionResult PostObter(Usuario usuario)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            //db.Usuarios.Add(usuario);
-            //db.SaveChanges();
+        //    //db.Usuarios.Add(usuario);
+        //    //db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = usuario.Id }, usuario);
-        }
+        //    return CreatedAtRoute("DefaultApi", new { id = usuario.Id }, usuario);
+        //}
 
         //// DELETE: api/Usuarios/5
         //[ResponseType(typeof(Usuario))]

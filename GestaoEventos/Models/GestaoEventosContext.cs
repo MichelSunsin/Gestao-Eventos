@@ -20,6 +20,6 @@ namespace GestaoEventos.Models
         }
 
         public System.Data.Entity.DbSet<GestaoEventos.Models.Usuario> Usuarios { get; set; }
-        public System.Data.Entity.DbSet<GestaoEventos.Models.Usuario> Agenda { get; set; }
+        public System.Data.Entity.DbSet<GestaoEventos.Models.Evento> Evento { get; set; }
     }
 }

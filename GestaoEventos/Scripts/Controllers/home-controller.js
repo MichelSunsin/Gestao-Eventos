@@ -6,21 +6,41 @@
         var _public = {};
 
         /* Métodos privados */
-        _private.ObterUsuariosPorLogin = function (f) {
-            appAjax.CallAjaxMethod_Post({ Id: 1, Nome: "Michel" }, "/api/Usuarios/ObterUsuariosPorLogin", f);
+        _private.usuarioExiste = (login, f) => appAjax.Post({}, `/api/Usuario/UsuarioExiste?login=${login}`, f);
+
+        _private.cadastrarNovoUsuario = () => {
+            appAjax.Post(
+                {
+                    Nome: $('#new_user_name').val(),
+                    Sobrenome: $('#new_user_lastName').val(),
+                    Login: $('#new_user_login').val(),
+                    Senha: $('#new_user_password').val() 
+                }, 
+                "/api/Usuario/CadastrarNovoUsuario/",
+                (retorno) => {
+                    console.log(retorno);
+                }
+            );
         };
+
+        _private.toggleCadastroLogin = () => {
+            $('#login, #cadastro').toggleClass("visible invisibleNone");
+            //_private.usuarioExiste("mintchel@gmail.com", (retorno) => {
+            //    if (retorno == true) {
+            //        console.log(retorno);
+            //    }
+            //    else {
+            //        console.log(retorno);
+            //    }
+            //});
+        };
+
 
         /* Métodos públicos */
-        _public.toggleCadastro = () => {
-            $('#login, #cadastro').toggleClass("visible invisibleNone");
-            _private.ObterUsuariosPorLogin((retorno) => {
-                console.log(retorno);
-            });
-            return false;
-        };
-
+      
         _public.Initialize = () => {
-            $('#btnCadastro, #btnVoltar').on('click', () => _public.toggleCadastro());
+            $('#btnCadastrarNovo, #btnCancelar').on('click', () => _private.toggleCadastroLogin());
+            $('#btnCadastrar').on('click', () => _private.cadastrarNovoUsuario());
         };
 
         return _public;
