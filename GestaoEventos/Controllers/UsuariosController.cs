@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
+using GestaoEventos.Classes;
 using GestaoEventos.Models;
 
 namespace GestaoEventos.Controllers
@@ -22,23 +17,50 @@ namespace GestaoEventos.Controllers
 
         [HttpPost]
         [Route("CadastrarNovoUsuario")]
-        public string CadastrarNovoUsuario(Usuario usuario)
+        public RetornoViewModel CadastrarNovoUsuario(Usuario usuario)
         {
             try
             {
-                if (db.Usuarios.Count(x => x.Login.Contains(usuario != null? usuario.Login : "")) > 0)
-                {
-                    throw new Exception("E-mail informado já cadastrado.");
-                }
-                return "Usuário cadastrado com sucesso";
+                if (UsuarioExiste(usuario.Login))
+                    throw new Exception("Já existe um usuário cadastrado com o e-mail fornecido. Tente usar outro");
+
+                db.Usuario.Add(usuario);
+                db.SaveChanges();
+                return new RetornoViewModel { Successo = "Usuário cadastrado com sucesso" };
             }
             catch (Exception e)
             {
-
-                return (e.Message);
+                return new RetornoViewModel { Erro = e.Message };
             }
         }
 
+        [HttpPost]
+        [Route("LogarUsuario")]
+        public RetornoViewModel LogarUsuario(string login, string senha)
+        {
+            try
+            {
+                var usuario = db.Usuario.Where(x => x.Login == login).FirstOrDefault();
+                if (usuario == null)
+                    throw new Exception("Usuário não encontrado");
+                else
+                    if (usuario.Senha != senha)
+                        throw new Exception("Senha inválida");
+
+                return new RetornoViewModel ();
+            }
+            catch (Exception e)
+            {
+                return new RetornoViewModel { Erro = e.Message };
+            }
+        }
+
+        [HttpGet]
+        [Route("ObterTodos")]
+        public List<Usuario> ObterTodos()
+        {
+            return db.Usuario.ToList();
+        }
         //// GET: api/Usuarios/5
         //[ResponseType(typeof(Usuario))]
         //public IHttpActionResult GetUsuario(long id)
@@ -127,9 +149,9 @@ namespace GestaoEventos.Controllers
             base.Dispose(disposing);
         }
 
-        private bool UsuarioExists(long id)
+        private bool UsuarioExiste(string login)
         {
-            return db.Usuarios.Count(e => e.Id == id) > 0;
+            return (db.Usuario.Count(x => x.Login.Contains(string.IsNullOrEmpty(login) ? "" : login)) > 0);
         }
     }
 }

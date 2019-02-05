@@ -37,6 +37,7 @@ namespace GestaoEventos
             #region Agenda
             bundles.Add(new ScriptBundle("~/bundles/agenda").Include(
                 "~/Scripts/bootbox.min.js",
+                "~/Scripts/Controllers/ajax-controller.js",
                 "~/Scripts/Controllers/agenda-controller.js",
                 "~/Scripts/moment.min.js",
                 "~/Scripts/Fullcalendar/fullcalendar.min.js",

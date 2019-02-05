@@ -8,7 +8,7 @@
 
         /* Métodos Privados */
 
-        _private.AjaxCall = (type, t, e, i, lcache, lasync) => {
+        _private.ajaxCall = (type, t, e, i, lcache, lasync) => {
             $.ajax({
                 type: type,
                 url: e,
@@ -23,20 +23,20 @@
         };
         
         /* Métodos Públicos */
-        _public.Get_NoCacheSync = (t, e, i) => {
-            _private.AjaxCall("GET", t, e, i, false, false);
+        _public.get_NoCacheSync = (t, e, i) => {
+            _private.ajaxCall("GET", t, e, i, false, false);
         };
 
-        _public.Get_NoCacheAsync = (t, e, i) => {
-            _private.AjaxCall("GET", t, e, i, false, true);
+        _public.get_NoCacheAsync = (t, e, i) => {
+            _private.ajaxCall("GET", t, e, i, false, true);
         };
 
-        _public.Post = (t, e, i) => {
-            _private.AjaxCall("POST", JSON.stringify(t), e, i, true, false);
+        _public.post = (t, e, i) => {
+            _private.ajaxCall("POST", JSON.stringify(t), e, i, true, false);
         };
 
-        _public.Post_NoCacheAsync = (t, e, i) => {
-            _private.AjaxCall("POST", JSON.stringify(t), e, i, false, true);
+        _public.post_NoCacheAsync = (t, e, i) => {
+            _private.ajaxCall("POST", JSON.stringify(t), e, i, false, true);
         };
 
         return _public;

@@ -1,17 +1,21 @@
 ﻿@{
+    Layout = null;
     ViewBag.Title = "Home Page";
 }
-
-<div id="login" class="row visible center">
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/home")
+@*<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">*@
+<div id="login" class="row visible center border">
     <div class="col-md-12">
-        <h3>Bem vindo ao Gestor de Eventos.</h3>
-        <p>Comece criando um novo usuário ou efetuando login.</p>
+        <p>Efetuar login</p>
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="user_name" maxlength="50" placeholder="E-mail">
+        <input type="text" class="form-control" style="text-transform:lowercase" id="user_name" maxlength="50" placeholder="E-mail">
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="user_password" maxlength="50" placeholder="Senha">
+        <input type="password" class="form-control" id="user_password" maxlength="20" placeholder="Senha">
     </div>
     <div class="col-md-12">
         <a href="#" id="btnCadastrarNovo">É novo? Cadastre-se!</a>
@@ -21,29 +25,24 @@
     </div>
 </div>
 
-<div class="row invisibleNone center" id="cadastro">
+<div class="row invisibleNone center border" id="cadastro">
     <div class="col-md-12">
-        <h3>Cadastrar novo usuário</h3>
-        <p>Comece criando um novo usuário ou efetuando login.</p>
+        <p>Cadastrar usuário</p>
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="new_user_name" maxlength="50" placeholder="Nome">
+        <input type="text" class="form-control required" id="new_user_name" maxlength="50" placeholder="Nome">
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="new_user_lastName" maxlength="50" placeholder="Sobrenome">
+        <input type="text" class="form-control required" id="new_user_lastName" maxlength="50" placeholder="Sobrenome">
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="new_user_login" maxlength="50" placeholder="E-mail">
+        <input type="text" class="form-control required" style="text-transform:lowercase" id="new_user_login" maxlength="50" placeholder="E-mail">
     </div>
     <div class="col-md-12" style="padding-bottom: 10px">
-        <input type="text" class="form-control" id="new_user_password" maxlength="50" placeholder="Senha">
+        <input type="password" class="form-control required" id="new_user_password" maxlength="20" placeholder="Senha">
     </div>
     <div class="col-md-12" style="text-align: end">
         <a class="btn btn-danger" id="btnCancelar">Cancelar</a>
         <a id="btnCadastrar" class="btn btn-primary">Cadastrar</a>
     </div>
 </div>
-
-@section Scripts{
-    @Scripts.Render("~/bundles/home")
-}

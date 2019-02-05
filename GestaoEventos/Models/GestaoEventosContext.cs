@@ -19,7 +19,7 @@ namespace GestaoEventos.Models
         {
         }
 
-        public System.Data.Entity.DbSet<GestaoEventos.Models.Usuario> Usuarios { get; set; }
+        public System.Data.Entity.DbSet<GestaoEventos.Models.Usuario> Usuario { get; set; }
         public System.Data.Entity.DbSet<GestaoEventos.Models.Evento> Evento { get; set; }
     }
 }

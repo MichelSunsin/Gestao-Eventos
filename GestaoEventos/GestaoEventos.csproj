@@ -142,6 +142,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Classes\RetornoViewModel.cs" />
     <Compile Include="Controllers\AgendaController.cs" />
     <Compile Include="Controllers\ApiMethodController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

@@ -17,15 +17,29 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
+}*/
+
+.alert {
+    display: none;
 }
 
+.border {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+}
 .center {
     margin: 0 auto;
-    width: 40%;
+    width: 30%;
+}
+
+.required {
+    background-color: #ffffe6;
 }
 
 .invisibleNone {

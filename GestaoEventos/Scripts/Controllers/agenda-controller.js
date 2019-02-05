@@ -93,173 +93,172 @@
             }
         };
 
-        _private.DefinirComponentes = function () {
-            _private.ObterColaboradoresBarraLateral().then(function (t) {
-                _private.itemElementCor = {};
+        _private.DefinirComponentes = () => {
+            _private.obterColaboradoresBarraLateral();
+            //_private.ObterColaboradoresBarraLateral().then(function (t) {
+                //_private.itemElementCor = {};
 
-                _private.componenteListaColaboradores = new appComponentesEdit.ComponenteLista({
-                    divId: 'containerColaboradores',
-                    items: t.Entidade,
-                    key: 'Id',
-                    itemTemplate: function (e) {
-                        return (
-                            "<div class='flex_father_'>" +
-                            "   <img class='' alt='' id = 'img_" + e.Id + "' src='data:image/" + e.Foto + "' style='width: 30px'> " +
-                            "   <span style='white-space: normal; margin-left: 10px;'>" + (e.Nome) + "</span>" +
-                            "</div>"
-                        );
-                    },
-                    onItemRenderizado: function (e) {
-                        e.itemData.selecionado = false;
-                        e.itemData.cor = _private.GerarCor(e.itemData.Id);
-                        _private.itemElementCor[e.itemData.Id] = { data: e.itemData, obj: e.itemElement };
-                    },
-                    onTrocaSelecao: function (e) {
-                        _private.ObterEventos(e.addedItems);
-                        _private.RemoverEventos(e.removedItems)
-                    }
-                });
+                //_private.componenteListaColaboradores = new appComponentesEdit.ComponenteLista({
+                    //divId: 'containerColaboradores',
+                    //items: t.Entidade,
+                    //key: 'Id',
+                    //itemTemplate: function (e) {
+                        //return (
+                            //"<div class='flex_father_'>" +
+                            //"   <img class='' alt='' id = 'img_" + e.Id + "' src='data:image/" + e.Foto + "' style='width: 30px'> " +
+                            //"   <span style='white-space: normal; margin-left: 10px;'>" + (e.Nome) + "</span>" +
+                            //"</div>"
+                        //);
+                    //},
+                    //onItemRenderizado: function (e) {
+                        //e.itemData.selecionado = false;
+                        //e.itemData.cor = _private.GerarCor(e.itemData.Id);
+                        //_private.itemElementCor[e.itemData.Id] = { data: e.itemData, obj: e.itemElement };
+                    //},
+                    //onTrocaSelecao: function (e) {
+                        //_private.ObterEventos(e.addedItems);
+                        //_private.RemoverEventos(e.removedItems);
+                    //}
+                //});
 
-                _private.RemoverEventos = function (listaItens) {
-                    var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
-                    if (currentDataSource != undefined) {
-                        listaItens.forEach(function (el) {
-                            var ele = _private.itemElementCor[el.Id];
-                            if (ele != undefined && ele != null) {
-                                ele.obj.css({ 'background-color': 'white', 'color': '#000' });
-                                ele.data.selecionado = false;
+                //_private.RemoverEventos = function (listaItens) {
+                    //var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
+                    //if (currentDataSource != undefined) {
+                        //listaItens.forEach(function (el) {
+                            //var ele = _private.itemElementCor[el.Id];
+                            //if (ele != undefined && ele != null) {
+                                //ele.obj.css({ 'background-color': 'white', 'color': '#000' });
+                                //ele.data.selecionado = false;
 
-                                if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length) {
-                                    if (_private.ed_editCheckboxTodos != undefined)
-                                        _private.ed_editCheckboxTodos.SetSemGatilho(true);
-                                }
-                                else {
-                                    if (_private.ed_editCheckboxTodos != undefined)
-                                        _private.ed_editCheckboxTodos.SetSemGatilho(false);
-                                }
-                            }
-                            var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId != el.Id);
-                            currentDataSource.events = eventosCarregadosAnteriormente;
-                            _private.RecarregarEventos(eventosCarregadosAnteriormente);
-                        })
-                    }
-                }
+                                //if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length) {
+                                    //if (_private.ed_editCheckboxTodos != undefined)
+                                        //_private.ed_editCheckboxTodos.SetSemGatilho(true);
+                                //}
+                                //else {
+                                    //if (_private.ed_editCheckboxTodos != undefined)
+                                        //_private.ed_editCheckboxTodos.SetSemGatilho(false);
+                                //}
+                            //}
+                            //var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId != el.Id);
+                            //currentDataSource.events = eventosCarregadosAnteriormente;
+                            //_private.RecarregarEventos(eventosCarregadosAnteriormente);
+                        //})
+                    //}
+                //}
 
-                _private.ObterEventos = function (listaItens) {
-                    var promisesList = [];
-                    var funcao = function (element) {
-                        return new Promise(function (resolve, reject) {
-                            var el = _private.itemElementCor[element.data.Id];
-                            if (el != undefined && el != null) {
-                                el.obj.css({ 'background-color': el.data.cor, 'color': '#fff' });
-                                el.data.selecionado = true;
+                //_private.ObterEventos = function (listaItens) {
+                    //var promisesList = [];
+                    //var funcao = function (element) {
+                        //return new Promise(function (resolve, reject) {
+                            //var el = _private.itemElementCor[element.data.Id];
+                            //if (el != undefined && el != null) {
+                                //el.obj.css({ 'background-color': el.data.cor, 'color': '#fff' });
+                                //el.data.selecionado = true;
 
-                                if (_private.ed_editCheckboxTodos != undefined && _private.ed_editCheckboxTodos != null) {
-                                    if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length)
-                                        _private.ed_editCheckboxTodos.SetSemGatilho(true);
-                                    else
-                                        _private.ed_editCheckboxTodos.SetSemGatilho(false);
-                                }
-                                var novosEventos = [];
-                                var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
-                                if (currentDataSource != undefined) {
-                                    var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId == el.data.Id);
-                                    if (eventosCarregadosAnteriormente.length == 0) {
-                                        moAgenda.ObterEventos(el.data.Id, function (retorno) {
-                                            novosEventos = retorno.Entidade;
-                                            novosEventos.forEach(function (item) {
-                                                item.color = el.data.cor;
-                                            });
-                                            Array.prototype.push.apply(currentDataSource.events, novosEventos);
-                                            resolve(currentDataSource.events);
+                                //if (_private.ed_editCheckboxTodos != undefined && _private.ed_editCheckboxTodos != null) {
+                                    //if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length)
+                                        //_private.ed_editCheckboxTodos.SetSemGatilho(true);
+                                    //else
+                                        //_private.ed_editCheckboxTodos.SetSemGatilho(false);
+                                //}
+                                //var novosEventos = [];
+                                //var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
+                                //if (currentDataSource != undefined) {
+                                    //var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId == el.data.Id);
+                                    //if (eventosCarregadosAnteriormente.length == 0) {
+                                        //moAgenda.ObterEventos(el.data.Id, function (retorno) {
+                                            //novosEventos = retorno.Entidade;
+                                            //novosEventos.forEach(function (item) {
+                                                //item.color = el.data.cor;
+                                            //});
+                                            //Array.prototype.push.apply(currentDataSource.events, novosEventos);
+                                            //resolve(currentDataSource.events);
 
-                                        });
-                                    }
-                                    else {
-                                        reject(false);
-                                    }
-                                }
-                                else {
-                                    moAgenda.ObterEventos(el.data.Id, function (retorno) {
-                                        novosEventos = retorno.Entidade;
-                                        novosEventos.forEach(function (item) {
-                                            item.color = el.data.cor;
-                                        });
-                                        resolve(novosEventos);
-                                    });
-                                }
-                            }
-                            else {
-                                reject(false);
-                            }
-                        })
-                    }
+                                        //});
+                                    //}
+                                    //else {
+                                        //reject(false);
+                                    //}
+                                //}
+                                //else {
+                                    //moAgenda.ObterEventos(el.data.Id, function (retorno) {
+                                        //novosEventos = retorno.Entidade;
+                                        //novosEventos.forEach(function (item) {
+                                            //item.color = el.data.cor;
+                                        //});
+                                        //resolve(novosEventos);
+                                    //});
+                                //}
+                            //}
+                            //else {
+                                //reject(false);
+                            //}
+                        //})
+                    //}
 
-                    listaItens.forEach(function (item) {
-                        promisesList.push({
-                            parametros: { data: item }
-                        });
-                    });
+                    //listaItens.forEach(function (item) {
+                        //promisesList.push({
+                            //parametros: { data: item }
+                        //});
+                    //});
 
-                    var recursivoPromise = function () {
-                        if (promisesList.length > 0) {
-                            funcao(promisesList[0].parametros).then(function (data) {
-                                _private.RecarregarEventos(data);
-                                promisesList.shift();
-                                recursivoPromise();
-                            }).catch(function (err) {
-                                promisesList.shift();
-                                recursivoPromise();
-                            })
-                        }
-                        else {
-                            $('.md_loading_excluir_compromisso').modal('hide');
-                            $('.md_obterEventosColaboradores').modal('hide');
-                            //bootbox.hideAll();
-                        }
+                    //var recursivoPromise = function () {
+                        //if (promisesList.length > 0) {
+                            //funcao(promisesList[0].parametros).then(function (data) {
+                                //_private.RecarregarEventos(data);
+                                //promisesList.shift();
+                                //recursivoPromise();
+                            //}).catch(function (err) {
+                                //promisesList.shift();
+                                //recursivoPromise();
+                            //})
+                        //}
+                        //else {
+                            //$('.md_loading_excluir_compromisso').modal('hide');
+                            //$('.md_obterEventosColaboradores').modal('hide');
+                            ////bootbox.hideAll();
+                        //}
 
 
-                    }
-                    recursivoPromise();
-                }
+                    //}
+                    //recursivoPromise();
+                //}
 
-                if (t.Entidade.length > 1) {
-                    _private.ed_editCheckboxTodos = new appComponentesEdit.EditorCheckBox({
-                        divId: 'editCheckboxTodos',
-                        text: labels['dxDataGridariaSelectAll'].msg,
-                        change: function (v) {
-                            modBootbox.Loading("md_obterEventosColaboradores");
-                            _private.componenteListaColaboradores.MarcarDesmarcarTodos(v);
-                        }
-                    });
-                    $('#selecionar-todos-container').show();
-                }
+                //if (t.Entidade.length > 1) {
+                    //_private.ed_editCheckboxTodos = new appComponentesEdit.EditorCheckBox({
+                        //divId: 'editCheckboxTodos',
+                        //text: labels['dxDataGridariaSelectAll'].msg,
+                        //change: function (v) {
+                            //modBootbox.Loading("md_obterEventosColaboradores");
+                            //_private.componenteListaColaboradores.MarcarDesmarcarTodos(v);
+                        //}
+                    //});
+                    //$('#selecionar-todos-container').show();
+                //}
 
-                var listaColaboradores = _private.componenteListaColaboradores.ObterItens();
-                if (listaColaboradores.length > 0) {
-                    var colaboradorLogado = listaColaboradores.filter(x => x.Id == moSessao.dataSession.UsuarioId);
-                    _private.ObterEventos(colaboradorLogado);
-                }
+                //var listaColaboradores = _private.componenteListaColaboradores.ObterItens();
+                //if (listaColaboradores.length > 0) {
+                    //var colaboradorLogado = listaColaboradores.filter(x => x.Id == moSessao.dataSession.UsuarioId);
+                    //_private.ObterEventos(colaboradorLogado);
+                //}
 
-            });
+            //});
 
-            $('#field_agenda > div.fc-toolbar > div.fc-left').append($("<button id='btnAdicionarEvento' class='fc-button fc-state-default' type='button'>" + labels['NovoCompromisso'].msg + "</button>"));
-            $('#btnAdicionarEvento').on('click', function () {
-                var date = {
-                    id: 0,
-                    empresaId: 0,
-                    CriadoPorId: 0,
-                    _d: new Date()
-                };
-                _private.AbrirModalEvento(date);
-            });
+            //$('#field_agenda > div.fc-toolbar > div.fc-left').append($("<button id='btnAdicionarEvento' class='fc-button fc-state-default' type='button'>" + labels['NovoCompromisso'].msg + "</button>"));
+            //$('#btnAdicionarEvento').on('click', function () {
+                //var date = {
+                    //id: 0,
+                    //empresaId: 0,
+                    //CriadoPorId: 0,
+                    //_d: new Date()
+                //};
+                //_private.AbrirModalEvento(date);
+            //});
         };
 
-        _private.ObterColaboradoresBarraLateral = function () {
-            return new Promise(function (resolve, reject) {
-                moAgenda.ObterColaboradoresBarraLateral(function (v) {
-                    resolve(v);
-                });
+        _private.obterColaboradoresBarraLateral = () => {
+            appAjax.get_NoCacheAsync(undefined, "/api/Usuario/ObterTodos/", (retorno) => {
+                console.log(retorno);
             });
         };
         
@@ -1212,15 +1211,12 @@
         };
 
         /* Métodos públicos */
-        _public.ToggleCadastro = () => {
-            console.log("funfou");
-        };
-
+       
         _public.Initialize = function () {
             //_private.CarregarParametros();
             //_private.ObterTitulos();
             _private.CarregarAgenda();
-            //_private.DefinirComponentes();
+            _private.DefinirComponentes();
         };
 
         return _public;
