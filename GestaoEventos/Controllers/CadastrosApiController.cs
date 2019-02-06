@@ -15,6 +15,7 @@ namespace GestaoEventos.Controllers
     {
         private GestaoEventosContext db = new GestaoEventosContext();
 
+        #region Usuario
         [HttpPost]
         [Route("CadastrarNovoUsuario")]
         public RetornoViewModel CadastrarNovoUsuario(Usuario usuario)
@@ -34,7 +35,7 @@ namespace GestaoEventos.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("LogarUsuario")]
         public RetornoViewModel LogarUsuario(string login, string senha)
         {
@@ -47,7 +48,7 @@ namespace GestaoEventos.Controllers
                     if (usuario.Senha != senha)
                     throw new Exception("Senha inválida");
 
-                return new RetornoViewModel();
+                return new RetornoViewModel() { Entidade = usuario };
             }
             catch (Exception e)
             {
@@ -57,88 +58,109 @@ namespace GestaoEventos.Controllers
 
         [HttpGet]
         [Route("ObterTodosUsuarios")]
-        public List<Usuario> ObterTodos()
+        public List<Usuario> ObterTodosUsuarios()
         {
             return db.Usuario.ToList();
         }
-        //// GET: api/Usuarios/5
-        //[ResponseType(typeof(Usuario))]
-        //public IHttpActionResult GetUsuario(long id)
-        //{
-        //    Usuario usuario = db.Usuarios.Find(id);
-        //    if (usuario == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return Ok(usuario);
+        private bool UsuarioExiste(string login)
+        {
+            return (db.Usuario.Count(x => x.Login.Contains(string.IsNullOrEmpty(login) ? "" : login)) > 0);
+        }
+        #endregion
+
+        #region Agenda
+        [HttpGet]
+        [Route("ObterEventos")]
+        public List<EventoDTO> ObterEventos(long usuarioId)
+        {
+            List<Evento> eventos = db.Evento.Where(x => x.Criador.Id == usuarioId).ToList();
+            eventos.AddRange(db.Evento.Where(x => x.Convidados.Any(y => y.Usuario.Id == usuarioId) && x.Criador.Id != usuarioId).ToList());
+
+            List<EventoDTO> eventosDTO = new List<EventoDTO>();
+
+            foreach (var evento in eventos)
+            {
+                eventosDTO.Add(new EventoDTO()
+                {
+                    title = evento.TituloCompromisso,
+                    id = evento.Id,
+                    start = evento.DataInicial,
+                    end = evento.DataFinal,
+                    CriadorId = evento.Criador != null ? evento.Criador.Id : 0,
+                    LoteEventosId = evento.Criador != null ? evento.Criador.Id : 0,
+                    Convidados = evento.Convidados.Select(x => x.Usuario.Id).ToList<long>()
+                });
+            }
+            return eventosDTO;
+        }
+
+        //public bool AvaliarDisponibilidadeConvidados(List<long> convidados)
+        //{
+
         //}
 
-        //// PUT: api/Usuarios/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutUsuario(long id, Usuario usuario)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        [HttpPost]
+        [Route("SalvarEvento")]
+        public RetornoViewModel SalvarEvento(EventoDTO eventoDTO)
+        {
+            try
+            {
+                Evento evento = new Evento();
+                if (eventoDTO.id != 0)
+                {
+                    evento = db.Evento.Find(eventoDTO.id);
+                }
+                else {
+                    evento = new Evento();
+                }
 
-        //    if (id != usuario.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+                evento.TituloCompromisso = eventoDTO.title;
+                evento.Descricao = eventoDTO.Descricao;
+                evento.DataInicial = eventoDTO.start;
+                evento.DataFinal = eventoDTO.end;
+                evento.Criador = db.Usuario.Find(eventoDTO.CriadorId);
+                evento.Convidados.Clear();
+                if (eventoDTO.Convidados != null)
+                {
+                    foreach (var convidado in eventoDTO.Convidados)
+                    {
+                        Usuario usuario = db.Usuario.Find(convidado);
+                        evento.Convidados.Add(new EventoXUsuario()
+                        {
+                            Usuario = usuario,
+                            Evento = evento
+                        });
+                    }
+                }
+                db.Evento.Add(evento);
+                db.SaveChanges();
+                return new RetornoViewModel() { Successo = "Evento salvo com sucesso" };
+            }
+            catch (Exception e)
+            {
+                return new RetornoViewModel() { Erro = e.Message };
+            }
+        }
 
-        //    db.Entry(usuario).State = EntityState.Modified;
+        [HttpPost]
+        [Route("ExcluirEvento")]
+        public RetornoViewModel ExcluirEvento(long eventoId)
+        {
+            try
+            {
+                Evento evento = db.Evento.Find(eventoId);
+                db.Evento.Remove(evento);
+                db.SaveChanges();
+                return new RetornoViewModel() { Successo = "Evento removido com sucesso" };
+            }
+            catch (Exception e)
+            {
+                return new RetornoViewModel() { Erro = e.Message };
+            }
+        }
 
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!UsuarioExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        //// POST: api/Usuarios
-        //[ResponseType(typeof(Usuario))]
-        //public IHttpActionResult PostObter(Usuario usuario)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    //db.Usuarios.Add(usuario);
-        //    //db.SaveChanges();
-
-        //    return CreatedAtRoute("DefaultApi", new { id = usuario.Id }, usuario);
-        //}
-
-        //// DELETE: api/Usuarios/5
-        //[ResponseType(typeof(Usuario))]
-        //public IHttpActionResult DeleteUsuario(long id)
-        //{
-        //    Usuario usuario = db.Usuarios.Find(id);
-        //    if (usuario == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    db.Usuarios.Remove(usuario);
-        //    db.SaveChanges();
-
-        //    return Ok(usuario);
-        //}
+        #endregion
 
         protected override void Dispose(bool disposing)
         {
@@ -147,11 +169,6 @@ namespace GestaoEventos.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool UsuarioExiste(string login)
-        {
-            return (db.Usuario.Count(x => x.Login.Contains(string.IsNullOrEmpty(login) ? "" : login)) > 0);
         }
     }
 }

@@ -41,7 +41,9 @@ namespace GestaoEventos
                 "~/Scripts/Controllers/agenda-controller.js",
                 "~/Scripts/moment.min.js",
                 "~/Scripts/Fullcalendar/fullcalendar.min.js",
-                "~/Scripts/Fullcalendar/Locale/pt-br.js"
+                "~/Scripts/Fullcalendar/Locale/pt-br.js",
+                "~/Scripts/bootstrap-datetimepicker.min.js",
+                "~/Scripts/select2.min.js"
             ));
             #endregion
         }

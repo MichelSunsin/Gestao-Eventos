@@ -45,13 +45,13 @@
                 Login: $('#user_name').val(),
                 Senha: $('#user_password').val()
             };
-            appAjax.post(undefined, `/api/LogarUsuario?login=${usuario.Login}&senha=${usuario.Senha}`, (retorno) => {
+            appAjax.get_NoCacheAsync(undefined, `/api/LogarUsuario?login=${usuario.Login}&senha=${usuario.Senha}`, (retorno) => {
                 if (retorno.Erro != null) {
                     _private.alerta("warning", retorno.Erro);
                     $('#new_user_login').focus();
                     return false;
                 }
-                document.cookie = `usuario.Login=${usuario.Login};expires= 1;path: "/"`;
+                sessionStorage.setItem('usuarioId', retorno.Entidade.Id);
                 window.location.href = "/Agenda";
             });
         };
