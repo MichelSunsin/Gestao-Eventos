@@ -146,7 +146,7 @@
     <Compile Include="Controllers\AgendaController.cs" />
     <Compile Include="Controllers\ApiMethodController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\UsuariosController.cs" />
+    <Compile Include="Controllers\CadastrosApiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

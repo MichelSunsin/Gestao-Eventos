@@ -24,7 +24,7 @@ textarea {
 }*/
 
 .alert {
-    display: none;
+    text-align: center;
 }
 
 .border {
@@ -36,6 +36,12 @@ textarea {
 .center {
     margin: 0 auto;
     width: 30%;
+}
+
+.colaborador {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
 }
 
 .required {

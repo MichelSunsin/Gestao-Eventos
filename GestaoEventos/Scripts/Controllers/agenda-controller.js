@@ -12,8 +12,6 @@
         _private.eventoId = 0;
         _private.criadoPorId = 0;
         _private.empresaId = 0;
-        _private.contadorFormularios = 0;
-        _private.formularios;
         _private.Cores = [
             { cor: '#275a74' },
             { cor: '#327496' },
@@ -67,16 +65,14 @@
                 $('#field_agenda').fullCalendar('addEventSource', newEventSource);
         };
 
-        _private.GerarCor = function (idColaborador) {
-            var todasUtilizadas = true;
+        _private.GerarCor = (idColaborador) => {
+            let todasUtilizadas = true;
 
-            var corJaDefinida = _private.Cores.find(function (x) {
-                return x.id == idColaborador;
-            });
+            let corJaDefinida = _private.Cores.find(x => x.id == idColaborador);
             if (corJaDefinida != undefined && corJaDefinida != null)
                 return corJaDefinida.cor;
 
-            for (var i = 0, len = _private.Cores.length; i < len; i++) {
+            for (let i = 0, len = _private.Cores.length; i < len; i++) {
                 if (_private.Cores[i].id == undefined) {
                     todasUtilizadas = false;
                     _private.Cores[i].id = idColaborador;
@@ -84,12 +80,11 @@
                 }
             }
             if (todasUtilizadas) {
-                var red = Math.random() * 205;
-                var green = Math.random() * 205;
-                var blue = Math.random() * 205;
-
-                var cor = "rgb" + "(" + red + "," + green + "," + blue + ")";
-                return cor;
+                let red = Math.random() * 205;
+                let green = Math.random() * 205;
+                let blue = Math.random() * 205;
+                return `rgb(${red},${green},${blue}`;
+                //return "rgb" + "(" + red + "," + green + "," + blue + ")";
             }
         };
 
@@ -120,109 +115,6 @@
                         //_private.RemoverEventos(e.removedItems);
                     //}
                 //});
-
-                //_private.RemoverEventos = function (listaItens) {
-                    //var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
-                    //if (currentDataSource != undefined) {
-                        //listaItens.forEach(function (el) {
-                            //var ele = _private.itemElementCor[el.Id];
-                            //if (ele != undefined && ele != null) {
-                                //ele.obj.css({ 'background-color': 'white', 'color': '#000' });
-                                //ele.data.selecionado = false;
-
-                                //if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length) {
-                                    //if (_private.ed_editCheckboxTodos != undefined)
-                                        //_private.ed_editCheckboxTodos.SetSemGatilho(true);
-                                //}
-                                //else {
-                                    //if (_private.ed_editCheckboxTodos != undefined)
-                                        //_private.ed_editCheckboxTodos.SetSemGatilho(false);
-                                //}
-                            //}
-                            //var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId != el.Id);
-                            //currentDataSource.events = eventosCarregadosAnteriormente;
-                            //_private.RecarregarEventos(eventosCarregadosAnteriormente);
-                        //})
-                    //}
-                //}
-
-                //_private.ObterEventos = function (listaItens) {
-                    //var promisesList = [];
-                    //var funcao = function (element) {
-                        //return new Promise(function (resolve, reject) {
-                            //var el = _private.itemElementCor[element.data.Id];
-                            //if (el != undefined && el != null) {
-                                //el.obj.css({ 'background-color': el.data.cor, 'color': '#fff' });
-                                //el.data.selecionado = true;
-
-                                //if (_private.ed_editCheckboxTodos != undefined && _private.ed_editCheckboxTodos != null) {
-                                    //if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length)
-                                        //_private.ed_editCheckboxTodos.SetSemGatilho(true);
-                                    //else
-                                        //_private.ed_editCheckboxTodos.SetSemGatilho(false);
-                                //}
-                                //var novosEventos = [];
-                                //var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
-                                //if (currentDataSource != undefined) {
-                                    //var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId == el.data.Id);
-                                    //if (eventosCarregadosAnteriormente.length == 0) {
-                                        //moAgenda.ObterEventos(el.data.Id, function (retorno) {
-                                            //novosEventos = retorno.Entidade;
-                                            //novosEventos.forEach(function (item) {
-                                                //item.color = el.data.cor;
-                                            //});
-                                            //Array.prototype.push.apply(currentDataSource.events, novosEventos);
-                                            //resolve(currentDataSource.events);
-
-                                        //});
-                                    //}
-                                    //else {
-                                        //reject(false);
-                                    //}
-                                //}
-                                //else {
-                                    //moAgenda.ObterEventos(el.data.Id, function (retorno) {
-                                        //novosEventos = retorno.Entidade;
-                                        //novosEventos.forEach(function (item) {
-                                            //item.color = el.data.cor;
-                                        //});
-                                        //resolve(novosEventos);
-                                    //});
-                                //}
-                            //}
-                            //else {
-                                //reject(false);
-                            //}
-                        //})
-                    //}
-
-                    //listaItens.forEach(function (item) {
-                        //promisesList.push({
-                            //parametros: { data: item }
-                        //});
-                    //});
-
-                    //var recursivoPromise = function () {
-                        //if (promisesList.length > 0) {
-                            //funcao(promisesList[0].parametros).then(function (data) {
-                                //_private.RecarregarEventos(data);
-                                //promisesList.shift();
-                                //recursivoPromise();
-                            //}).catch(function (err) {
-                                //promisesList.shift();
-                                //recursivoPromise();
-                            //})
-                        //}
-                        //else {
-                            //$('.md_loading_excluir_compromisso').modal('hide');
-                            //$('.md_obterEventosColaboradores').modal('hide');
-                            ////bootbox.hideAll();
-                        //}
-
-
-                    //}
-                    //recursivoPromise();
-                //}
 
                 //if (t.Entidade.length > 1) {
                     //_private.ed_editCheckboxTodos = new appComponentesEdit.EditorCheckBox({
@@ -256,9 +148,127 @@
             //});
         };
 
+        _private.RemoverEventos = function (listaItens) {
+            var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
+            if (currentDataSource != undefined) {
+                listaItens.forEach(function (el) {
+                    var ele = _private.itemElementCor[el.Id];
+                    if (ele != undefined && ele != null) {
+                        ele.obj.css({ 'background-color': 'white', 'color': '#000' });
+                        ele.data.selecionado = false;
+
+                        if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length) {
+                            if (_private.ed_editCheckboxTodos != undefined)
+                                _private.ed_editCheckboxTodos.SetSemGatilho(true);
+                        }
+                        else {
+                            if (_private.ed_editCheckboxTodos != undefined)
+                                _private.ed_editCheckboxTodos.SetSemGatilho(false);
+                        }
+                    }
+                    var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId != el.Id);
+                    currentDataSource.events = eventosCarregadosAnteriormente;
+                    _private.RecarregarEventos(eventosCarregadosAnteriormente);
+                })
+            }
+        }
+
+        _private.ObterEventos = function (listaItens) {
+            var promisesList = [];
+            var funcao = function (element) {
+                return new Promise(function (resolve, reject) {
+                    var el = _private.itemElementCor[element.data.Id];
+                    if (el != undefined && el != null) {
+                        el.obj.css({ 'background-color': el.data.cor, 'color': '#fff' });
+                        el.data.selecionado = true;
+
+                        if (_private.ed_editCheckboxTodos != undefined && _private.ed_editCheckboxTodos != null) {
+                            if (listaColaboradores.filter(x => x.selecionado == true).length == listaColaboradores.length)
+                                _private.ed_editCheckboxTodos.SetSemGatilho(true);
+                            else
+                                _private.ed_editCheckboxTodos.SetSemGatilho(false);
+                        }
+                        var novosEventos = [];
+                        var currentDataSource = $('#field_agenda').fullCalendar('getEventSources')[0];
+                        if (currentDataSource != undefined) {
+                            var eventosCarregadosAnteriormente = currentDataSource.events.filter(x => x.LoteEventosId == el.data.Id);
+                            if (eventosCarregadosAnteriormente.length == 0) {
+                                moAgenda.ObterEventos(el.data.Id, function (retorno) {
+                                    novosEventos = retorno.Entidade;
+                                    novosEventos.forEach(function (item) {
+                                        item.color = el.data.cor;
+                                    });
+                                    Array.prototype.push.apply(currentDataSource.events, novosEventos);
+                                    resolve(currentDataSource.events);
+
+                                });
+                            }
+                            else {
+                                reject(false);
+                            }
+                        }
+                        else {
+                            moAgenda.ObterEventos(el.data.Id, function (retorno) {
+                                novosEventos = retorno.Entidade;
+                                novosEventos.forEach(function (item) {
+                                    item.color = el.data.cor;
+                                });
+                                resolve(novosEventos);
+                            });
+                        }
+                    }
+                    else {
+                        reject(false);
+                    }
+                })
+            }
+
+            listaItens.forEach(function (item) {
+                promisesList.push({
+                    parametros: { data: item }
+                });
+            });
+
+            var recursivoPromise = function () {
+                if (promisesList.length > 0) {
+                    funcao(promisesList[0].parametros).then(function (data) {
+                        _private.RecarregarEventos(data);
+                        promisesList.shift();
+                        recursivoPromise();
+                    }).catch(function (err) {
+                        promisesList.shift();
+                        recursivoPromise();
+                    })
+                }
+                else {
+                    $('.md_loading_excluir_compromisso').modal('hide');
+                    $('.md_obterEventosColaboradores').modal('hide');
+                    //bootbox.hideAll();
+                }
+
+
+            }
+            recursivoPromise();
+        }
+
         _private.obterColaboradoresBarraLateral = () => {
-            appAjax.get_NoCacheAsync(undefined, "/api/Usuario/ObterTodos/", (retorno) => {
-                console.log(retorno);
+            appAjax.get_NoCacheAsync(undefined, "/api/ObterTodosUsuarios/", (retorno) => {
+                retorno.forEach((usuario) => {
+                    let cor = _private.GerarCor(usuario.Id);
+                    $('#containerColaboradores').append(`<div href=# class="colaborador" data-id=${usuario.Id} data-selected=false data-cor=${cor}>${usuario.Nome}</div>`);
+                    let divColaborador = $(`.colaborador[data-id=${usuario.Id}]`);
+                    divColaborador.on('click', () => {
+                        divColaborador.data("selected", !divColaborador.data("selected"));
+                        if (divColaborador.data("selected") == true) {
+                            divColaborador.css('color', 'white');
+                            divColaborador.css('background-color', divColaborador.data("cor"));
+                        }
+                        else {
+                            divColaborador.css('color', 'black');
+                            divColaborador.css('background-color', 'white');
+                        }
+                    });
+                });
             });
         };
         

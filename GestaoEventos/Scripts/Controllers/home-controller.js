@@ -23,7 +23,7 @@
                 Login: $('#new_user_login').val(),
                 Senha: $('#new_user_password').val()
             };
-            appAjax.post(usuario, "/api/Usuario/CadastrarNovoUsuario/", (retorno) => {
+            appAjax.post(usuario, "/api/CadastrarNovoUsuario/", (retorno) => {
                 if (retorno.Erro != null) {
                     switch (retorno.Erro) {
                         case "Já existe um usuário cadastrado com o e-mail fornecido. Tente usar outro": {
@@ -45,7 +45,7 @@
                 Login: $('#user_name').val(),
                 Senha: $('#user_password').val()
             };
-            appAjax.post(undefined, `/api/Usuario/LogarUsuario?login=${usuario.Login}&senha=${usuario.Senha}`, (retorno) => {
+            appAjax.post(undefined, `/api/LogarUsuario?login=${usuario.Login}&senha=${usuario.Senha}`, (retorno) => {
                 if (retorno.Erro != null) {
                     _private.alerta("warning", retorno.Erro);
                     $('#new_user_login').focus();

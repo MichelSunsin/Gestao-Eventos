@@ -1,17 +1,17 @@
-﻿using System;
+﻿using GestaoEventos.Classes;
+using GestaoEventos.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using GestaoEventos.Classes;
-using GestaoEventos.Models;
 
 namespace GestaoEventos.Controllers
 {
     /// <summary>
     /// Summary Placeholder
     /// </summary>
-    [RoutePrefix("api/Usuario")]
-    public class UsuariosController : ApiController
+    [RoutePrefix("api")]
+    public class CadastrosApiController : ApiController
     {
         private GestaoEventosContext db = new GestaoEventosContext();
 
@@ -45,9 +45,9 @@ namespace GestaoEventos.Controllers
                     throw new Exception("Usuário não encontrado");
                 else
                     if (usuario.Senha != senha)
-                        throw new Exception("Senha inválida");
+                    throw new Exception("Senha inválida");
 
-                return new RetornoViewModel ();
+                return new RetornoViewModel();
             }
             catch (Exception e)
             {
@@ -56,7 +56,7 @@ namespace GestaoEventos.Controllers
         }
 
         [HttpGet]
-        [Route("ObterTodos")]
+        [Route("ObterTodosUsuarios")]
         public List<Usuario> ObterTodos()
         {
             return db.Usuario.ToList();
