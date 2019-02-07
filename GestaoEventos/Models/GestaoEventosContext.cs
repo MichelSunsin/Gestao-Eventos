@@ -18,8 +18,23 @@ namespace GestaoEventos.Models
         public GestaoEventosContext() : base("name=GestaoEventosContext")
         {
         }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Evento>()
+                .HasMany(x => x.Convidados).WithOptional(y => y.Evento).WillCascadeOnDelete(true);
+
+            //modelBuilder.Entity<EventoXUsuario>()
+                //.HasOptional<Evento>(s => s.Evento)
+                //.WithMany()
+                //.WillCascadeOnDelete(false);
+            //modelBuilder.Entity<EventoXUsuario>()
+                //.HasOptional<Usuario>(s => s.Usuario)
+                //.WithMany()
+                //.WillCascadeOnDelete(false);
+        }
 
         public System.Data.Entity.DbSet<GestaoEventos.Models.Usuario> Usuario { get; set; }
         public System.Data.Entity.DbSet<GestaoEventos.Models.Evento> Evento { get; set; }
+        public System.Data.Entity.DbSet<GestaoEventos.Models.EventoXUsuario> EventoXUsuario { get; set; }
     }
 }

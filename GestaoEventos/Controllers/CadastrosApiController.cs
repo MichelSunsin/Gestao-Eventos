@@ -2,6 +2,7 @@
 using GestaoEventos.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 
@@ -14,7 +15,6 @@ namespace GestaoEventos.Controllers
     public class CadastrosApiController : ApiController
     {
         private GestaoEventosContext db = new GestaoEventosContext();
-
         #region Usuario
         [HttpPost]
         [Route("CadastrarNovoUsuario")]
@@ -27,7 +27,7 @@ namespace GestaoEventos.Controllers
 
                 db.Usuario.Add(usuario);
                 db.SaveChanges();
-                return new RetornoViewModel { Successo = "Usuário cadastrado com sucesso" };
+                return new RetornoViewModel { Sucesso = "Usuário cadastrado com sucesso" };
             }
             catch (Exception e)
             {
@@ -74,31 +74,36 @@ namespace GestaoEventos.Controllers
         [Route("ObterEventos")]
         public List<EventoDTO> ObterEventos(long usuarioId)
         {
-            List<Evento> eventos = db.Evento.Where(x => x.Criador.Id == usuarioId).ToList();
-            eventos.AddRange(db.Evento.Where(x => x.Convidados.Any(y => y.Usuario.Id == usuarioId) && x.Criador.Id != usuarioId).ToList());
-
+            List<Evento> eventos = db.Evento.Include("Convidados").Include("Convidados.Usuario").Where(x => x.Criador.Id == usuarioId).ToList();
+            eventos.AddRange(db.Evento.Include("Convidados").Include("Convidados.Usuario").Where(x => x.Convidados.Any(y => y.Usuario.Id == usuarioId) && x.Criador.Id != usuarioId).ToList());
             List<EventoDTO> eventosDTO = new List<EventoDTO>();
 
             foreach (var evento in eventos)
             {
                 eventosDTO.Add(new EventoDTO()
                 {
-                    title = evento.TituloCompromisso,
                     id = evento.Id,
+                    title = evento.TituloCompromisso,
+                    Descricao = evento.Descricao,
                     start = evento.DataInicial,
                     end = evento.DataFinal,
                     CriadorId = evento.Criador != null ? evento.Criador.Id : 0,
-                    LoteEventosId = evento.Criador != null ? evento.Criador.Id : 0,
+                    LoteEventosId = usuarioId,
                     Convidados = evento.Convidados.Select(x => x.Usuario.Id).ToList<long>()
                 });
             }
             return eventosDTO;
         }
 
-        //public bool AvaliarDisponibilidadeConvidados(List<long> convidados)
-        //{
-
-        //}
+        public IQueryable<EventoXUsuario> AvaliarDisponibilidadeConvidados(long eventoId, List<long> usuarios, DateTime dataInicial, DateTime dataFinal)
+        {
+            var usuariosIndisponiveis = db.Evento.Include("Convidados").Include("Convidados.Usuario")
+                .Where(x => x.Id != eventoId
+                && dataInicial <= x.DataFinal
+                && dataFinal >= x.DataInicial);
+            var teste = usuariosIndisponiveis.SelectMany(y => y.Convidados.Where(z => usuarios.Contains(z.Usuario.Id)));
+            return teste;
+        }
 
         [HttpPost]
         [Route("SalvarEvento")]
@@ -111,7 +116,8 @@ namespace GestaoEventos.Controllers
                 {
                     evento = db.Evento.Find(eventoDTO.id);
                 }
-                else {
+                else
+                {
                     evento = new Evento();
                 }
 
@@ -121,21 +127,23 @@ namespace GestaoEventos.Controllers
                 evento.DataFinal = eventoDTO.end;
                 evento.Criador = db.Usuario.Find(eventoDTO.CriadorId);
                 evento.Convidados.Clear();
-                if (eventoDTO.Convidados != null)
+
+                foreach (var convidado in eventoDTO.Convidados)
                 {
-                    foreach (var convidado in eventoDTO.Convidados)
+                    Usuario usuario = db.Usuario.Find(convidado);
+                    evento.Convidados.Add(new EventoXUsuario()
                     {
-                        Usuario usuario = db.Usuario.Find(convidado);
-                        evento.Convidados.Add(new EventoXUsuario()
-                        {
-                            Usuario = usuario,
-                            Evento = evento
-                        });
-                    }
+                        Usuario = usuario,
+                        Evento = evento
+                    });
                 }
+                if (evento.Id == 0) {
+                    db.Entry(evento).State = EntityState.Modified;
+                }
+
                 db.Evento.Add(evento);
                 db.SaveChanges();
-                return new RetornoViewModel() { Successo = "Evento salvo com sucesso" };
+                return new RetornoViewModel() { Sucesso = "Evento salvo com sucesso" };
             }
             catch (Exception e)
             {
@@ -152,7 +160,7 @@ namespace GestaoEventos.Controllers
                 Evento evento = db.Evento.Find(eventoId);
                 db.Evento.Remove(evento);
                 db.SaveChanges();
-                return new RetornoViewModel() { Successo = "Evento removido com sucesso" };
+                return new RetornoViewModel() { Sucesso = "Evento removido com sucesso" };
             }
             catch (Exception e)
             {

@@ -8,7 +8,7 @@ namespace GestaoEventos.Classes
     public class RetornoViewModel
     {
         public object Entidade { get; set; }
-        public string Successo { get; set; }
+        public string Sucesso { get; set; }
         public string Erro { get; set; }
     }
 }

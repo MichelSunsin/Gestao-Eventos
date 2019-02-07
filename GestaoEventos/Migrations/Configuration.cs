@@ -11,6 +11,7 @@ namespace GestaoEventos.Migrations
         {
             AutomaticMigrationsEnabled = true;
             ContextKey = "GestaoEventos.Models.GestaoEventosContext";
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(GestaoEventos.Models.GestaoEventosContext context)
