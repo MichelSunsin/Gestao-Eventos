@@ -95,14 +95,13 @@ namespace GestaoEventos.Controllers
             return eventosDTO;
         }
 
-        public IQueryable<EventoXUsuario> AvaliarDisponibilidadeConvidados(long eventoId, List<long> usuarios, DateTime dataInicial, DateTime dataFinal)
+        public bool AvaliarDisponibilidadeConvidados(long eventoId, List<long> usuarios, DateTime dataInicial, DateTime dataFinal)
         {
             var usuariosIndisponiveis = db.Evento.Include("Convidados").Include("Convidados.Usuario")
                 .Where(x => x.Id != eventoId
                 && dataInicial <= x.DataFinal
-                && dataFinal >= x.DataInicial);
-            var teste = usuariosIndisponiveis.SelectMany(y => y.Convidados.Where(z => usuarios.Contains(z.Usuario.Id)));
-            return teste;
+                && dataFinal >= x.DataInicial).Select(x => x.Convidados.Where(y => usuarios.Contains(y.Usuario.Id)));
+            return true;
         }
 
         [HttpPost]
@@ -111,21 +110,24 @@ namespace GestaoEventos.Controllers
         {
             try
             {
+                string validacao = "";
                 Evento evento = new Evento();
                 if (eventoDTO.id != 0)
                 {
-                    evento = db.Evento.Find(eventoDTO.id);
+                    evento = db.Evento.Include("Convidados").First(x => x.Id == eventoDTO.id);
                 }
-                else
-                {
-                    evento = new Evento();
-                }
+
+                if (!string.IsNullOrEmpty(validacao))
+                    throw new Exception(validacao);
+
+                AvaliarDisponibilidadeConvidados(evento.Id, eventoDTO.Convidados, eventoDTO.start, eventoDTO.end);
 
                 evento.TituloCompromisso = eventoDTO.title;
                 evento.Descricao = eventoDTO.Descricao;
                 evento.DataInicial = eventoDTO.start;
                 evento.DataFinal = eventoDTO.end;
                 evento.Criador = db.Usuario.Find(eventoDTO.CriadorId);
+                db.EventoXUsuario.RemoveRange(evento.Convidados);
                 evento.Convidados.Clear();
 
                 foreach (var convidado in eventoDTO.Convidados)
@@ -137,11 +139,15 @@ namespace GestaoEventos.Controllers
                         Evento = evento
                     });
                 }
-                if (evento.Id == 0) {
+
+                if (evento.Id != 0)
+                {
                     db.Entry(evento).State = EntityState.Modified;
                 }
-
-                db.Evento.Add(evento);
+                else
+                {
+                    db.Evento.Add(evento);
+                }
                 db.SaveChanges();
                 return new RetornoViewModel() { Sucesso = "Evento salvo com sucesso" };
             }

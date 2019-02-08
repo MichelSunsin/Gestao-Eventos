@@ -7,10 +7,6 @@
 
         /* Variáveis privadas                             */
         /*------------------------------------------------*/
-        _private.excluirTipoCompromissoIds = [];
-        _private.eventoId = 0;
-        _private.criadoPorId = 0;
-        _private.empresaId = 0;
         _private.Cores = [
             { cor: '#275a74' },
             { cor: '#327496' },
@@ -49,6 +45,7 @@
         /* Métodos privados                               */
         /*------------------------------------------------*/
         _private.alerta = (tipo, mensagem) => {
+            $('.alert').alert('close');
             $('body').prepend(`<div class="alert alert-${tipo} alert-dismissable" data-dismiss="alert">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 ${mensagem}
@@ -88,15 +85,6 @@
 
         _private.definirComponentes = () => {
             _private.obterColaboradoresBarraLateral();
-            $('#field_agenda > div.fc-toolbar > div.fc-left').append($("<button id='btnAdicionarEvento' class='fc-button fc-state-default' type='button'>Novo Evento</button>"));
-            $('#btnAdicionarEvento').on('click', function () {
-                var date = {
-                    id: 0,
-                    CriadoPorId: 0,
-                    _d: new Date()
-                };
-                _private.abrirModalEvento(date);
-            });
         };
 
         _private.obterEventos = (usuarioId, cor) => {
@@ -205,8 +193,8 @@
                                 id: evento.id,
                                 title: $('#tituloCompromisso').val(),
                                 Descricao: $('#descricao').val(),
-                                start: $('#dataInicial').data("DateTimePicker").date(),
-                                end: $('#dataFinal').data("DateTimePicker").date(),
+                                start: new Date($('#dataInicial').data("DateTimePicker").date()),
+                                end: new Date($('#dataFinal').data("DateTimePicker").date()),
                                 CriadorId: sessionStorage.getItem("usuarioId")
                             };
                             let listaConvidados = [];
@@ -242,7 +230,14 @@
                                     return false;
                                 }
                                 _private.alerta("success", retorno.Sucesso);
-                                _private.recarregarEventos();
+                                $('.colaborador').each((i, obj) => {
+                                    if ($(obj).data('selected') == true) {
+                                        let usuarioId = $(obj).data('id');
+                                        let cor = $(obj).data('cor');
+                                        _private.removerEventos(usuarioId);
+                                        _private.obterEventos(usuarioId, cor);
+                                    }
+                                });
                             });
                         }
                     },
@@ -282,15 +277,14 @@
                             vertical: 'auto'
                         }
                     });
-                    $('#convidados').select2({ data: _private.colaboradores });
+                    $('#convidados').select2({ data: _private.colaboradores.filter(x => x.id != sessionStorage.getItem("usuarioId")) });
                 }).unbind('shown.bs.modal').on('shown.bs.modal', () => {
                     //Metodo Mostrar
-                    _private.eventoId = evento.id == undefined ? 0 : evento.id;
                     if (evento.id != 0) {
                         $("#tituloCompromisso").val(evento.title);
                         $("#descricao").val(evento.Descricao);
                         $("#dataInicial").data("DateTimePicker").date(evento.start);
-                        $("#dataFinal").data("DateTimePicker").date(evento.end);
+                        $("#dataFinal").data("DateTimePicker").date(evento.end == null ? evento.start : evento.end);
                         $('#convidados').val(evento.Convidados).trigger('change');
                     }
                     else {
@@ -330,7 +324,7 @@
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 },
                 locale: 'pt-br',
-                timezone: 'pt-br',
+                timezone: 'America/Sao_Paulo',
                 buttonIcons: {
                     prev: 'left-single-arrow',
                     next: 'right-single-arrow',
@@ -422,6 +416,9 @@
         /* Métodos públicos */
 
         _public.Initialize = () => {
+            if (sessionStorage.getItem("usuarioId") == null) {
+                window.location.href = "/";
+            }
             _private.carregarAgenda();
             _private.definirComponentes();
         };

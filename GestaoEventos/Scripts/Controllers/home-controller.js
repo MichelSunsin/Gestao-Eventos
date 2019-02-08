@@ -61,6 +61,7 @@
         /* Métodos públicos */
 
         _public.Initialize = () => {
+            sessionStorage.clear();
             $('#btnCadastrarNovo, #btnCancelar').on('click', () => _private.toggleCadastroLogin());
             $('#btnCadastrar').on('click', () => _private.cadastrarNovoUsuario());
             $('#btnLogin').on('click', () => _private.logar());
