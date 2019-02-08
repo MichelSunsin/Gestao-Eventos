@@ -44,9 +44,9 @@
 
         /* Métodos privados                               */
         /*------------------------------------------------*/
-        _private.alerta = (tipo, mensagem) => {
+        _private.alerta = (tipo, mensagem, corpo) => {
             $('.alert').alert('close');
-            $('body').prepend(`<div class="alert alert-${tipo} alert-dismissable" data-dismiss="alert">
+            $(corpo).prepend(`<div class="alert alert-${tipo} alert-dismissable" data-dismiss="alert">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 ${mensagem}
                              </div>`);
@@ -92,7 +92,7 @@
             if (currentDataSource != undefined) {
                 let eventosCarregadosAnteriormente = currentDataSource.rawEventDefs.filter(x => x.LoteEventosId == usuarioId);
                 if (eventosCarregadosAnteriormente.length == 0) {
-                    appAjax.get_NoCacheAsync(undefined, `/api/ObterEventos?usuarioId=${usuarioId}`, (retorno) => {
+                    appAjax.get_NoCacheSync(undefined, `/api/ObterEventos?usuarioId=${usuarioId}`, (retorno) => {
                         retorno.forEach((item) => {
                             item.color = cor;
                         });
@@ -189,6 +189,7 @@
                         label: 'Salvar',
                         className: 'btn btn-primary',
                         callback: () => {
+                            let erro = null;
                             let objeto = {
                                 id: evento.id,
                                 title: $('#tituloCompromisso').val(),
@@ -197,6 +198,12 @@
                                 end: new Date($('#dataFinal').data("DateTimePicker").date()),
                                 CriadorId: sessionStorage.getItem("usuarioId")
                             };
+
+                            if (moment(objeto.start).isAfter(objeto.end) || moment(objeto.start).isSame(objeto.end)) {
+                                _private.alerta("warning", "Data Final deve ser maior que data inicial", ".modal-body");
+                                return false;
+                            }
+
                             let listaConvidados = [];
                             $('#convidados').val().forEach((item) => {
                                 listaConvidados.push(parseInt(item));
@@ -204,10 +211,11 @@
                             objeto.Convidados = listaConvidados;
                             appAjax.post(objeto, "/api/SalvarEvento/", (retorno) => {
                                 if (retorno.Erro != null) {
-                                    _private.alerta("warning", retorno.Erro);
+                                    erro = retorno.Erro;
+                                    _private.alerta("warning", retorno.Erro, ".modal-body");
                                     return false;
                                 }
-                                _private.alerta("success", retorno.Sucesso);
+                                _private.alerta("success", retorno.Sucesso, "body");
                                 $('.colaborador').each((i, obj) => {
                                     if ($(obj).data('selected') == true) {
                                         let usuarioId = $(obj).data('id');
@@ -217,6 +225,8 @@
                                     }
                                 });
                             });
+                            if (erro != null)
+                                return false;
                         }
                     },
                     exclude:
@@ -226,10 +236,10 @@
                         callback: () => {
                             appAjax.post(undefined, `/api/ExcluirEvento?eventoId=${evento.id}`, (retorno) => {
                                 if (retorno.Erro != null) {
-                                    _private.alerta("warning", retorno.Erro);
+                                    _private.alerta("warning", retorno.Erro, "body");
                                     return false;
                                 }
-                                _private.alerta("success", retorno.Sucesso);
+                                _private.alerta("success", retorno.Sucesso, "body");
                                 $('.colaborador').each((i, obj) => {
                                     if ($(obj).data('selected') == true) {
                                         let usuarioId = $(obj).data('id');
@@ -255,7 +265,6 @@
             }).find("div.modal-dialog")
                 .init(() => {
                     //Metodo Iniciar
-                    //$('.btn.btn-primary.btn').hide();
                     if (evento.id == 0)
                         $('.btn.btn-danger').hide();
 
@@ -294,23 +303,7 @@
                             $("#dataFinal").data("DateTimePicker").date(dt);
                         }
                     }
-                    //$('.bootbox.modal').removeAttr('tabindex');
                 }).unbind('hidden.bs.modal').on("hidden.bs.modal", function (e) {
-                    //Metodo Destruir
-
-                    // Ajusta o foco quando tem mais de um modal aberto
-                    //if (e.target === this) {
-                    //    if (typeof dialog !== 'undefined') {
-                    //        dialog.remove();
-                    //        $(e.target).data('bs.modal', null);
-                    //    }
-                    //}
-                    //if ($('.modal.in').css('display') == 'block') {
-                    //    //atenção 2018-06-12
-                    //    //$('body').addClass('modal-open');
-                    //} else {
-                    //    $('body').removeClass('modal-open');
-                    //}
                 });
         };
 
@@ -349,59 +342,6 @@
                 eventDrop: function (evento, delta, revertFunc) {
                 },
                 eventLimit: true,
-                //eventRender: (evento, element, view) => {
-                //    let statusCompromisso;
-                //    switch (parseInt(evento.StatusCompromisso)) {
-                //        case 1:
-                //            {
-                //                element.find(".fc-title").prepend("<i class='fa fa-calendar'></i> ");
-                //                statusCompromisso = "Aberto";
-                //                break;
-                //            }
-                //        case 2:
-                //            {
-                //                element.find(".fc-title").prepend("<i class='fa fa-check'></i> ");
-                //                statusCompromisso = "Concluído";
-                //                break;
-                //            }
-                //        case 3:
-                //            {
-                //                element.find(".fc-title").prepend("<i class='fa fa-check'></i> ");
-                //                statusCompromisso = "Cancelado";
-                //                break;
-                //            }
-                //        default:
-                //            break;
-                //    }
-                //    var local = evento.Local == null ? 'Indefinido' : evento.Local;
-                //    if (!evento.allDay) {
-                //        let template = "<div style='font-weight:bold;'>" + evento.title + "</div>" +
-                //            "<div><span style='font-weight:bold'>Criado por: </span>" + evento.CriadoPorNome + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['NomeRazaosocial'].msg + ": </span>" + evento.RazaoSocial + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['Horario'].msg + ": </span>" + evento.HorarioInicio + " - " + evento.HorarioFim + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['Local'].msg + ": </span>" + local + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['Status'].msg + ": </span>" + statusCompromisso + "</div>";
-                //    }
-                //    else {
-                //        let template = "<div style='font-weight:bold;'>" + evento.title + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['CriadoPor'].msg + ": </span>" + evento.CriadoPorNome + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['NomeRazaosocial'].msg + ": </span>" + evento.RazaoSocial + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['Local'].msg + ": </span>" + local + "</div>" +
-                //            "<div><span style='font-weight:bold'>" + labels['Status'].msg + ": </span>" + statusCompromisso + "</div>";
-
-                //    }
-                //    element.qtip({
-                //        content: { text: template },
-                //        overwrite: true,
-                //        position: {
-                //            container: $('.fc-day-grid-event fc-h-event fc-event fc-start fc-end'),
-                //            viewport: $(window),
-                //            target: 'mouse',
-                //            adjust: { x: 5, y: 5 }
-                //        },
-                //        style: 'qtip-bootstrap'
-                //    });
-                //},
                 eventClick: (evento, jsEvent, view) => {
                     _private.abrirModalEvento(evento);
                 },

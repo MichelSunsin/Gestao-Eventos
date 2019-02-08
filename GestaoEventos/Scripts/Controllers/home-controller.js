@@ -7,6 +7,7 @@
 
         /* Métodos privados */
         _private.alerta = (tipo, mensagem) => {
+            $('.alert').alert('close');
             $('body').prepend(`<div class="alert alert-${tipo} alert-dismissable" data-dismiss="alert">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 ${mensagem}
@@ -23,6 +24,29 @@
                 Login: $('#new_user_login').val(),
                 Senha: $('#new_user_password').val()
             };
+
+            if (usuario.Nome == "") {
+                _private.alerta("warning", "Nome é obrigatório");
+                $('#new_user_name').focus();
+                return false;
+            }
+
+            if (usuario.Sobrenome == "") {
+                _private.alerta("warning", "Sobrenome é obrigatório");
+                $('#new_user_lastName').focus();
+                return false;
+            }
+
+            if (usuario.Login == "") {
+                _private.alerta("warning", "Login é obrigatório");
+                $('#new_user_login').focus();
+                return false;
+            }
+            if (usuario.Senha == "") {
+                _private.alerta("warning", "Senha é obrigatória");
+                $('#new_user_password').focus();
+                return false;
+            }
             appAjax.post(usuario, "/api/CadastrarNovoUsuario/", (retorno) => {
                 if (retorno.Erro != null) {
                     switch (retorno.Erro) {

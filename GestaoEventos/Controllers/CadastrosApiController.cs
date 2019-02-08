@@ -74,8 +74,8 @@ namespace GestaoEventos.Controllers
         [Route("ObterEventos")]
         public List<EventoDTO> ObterEventos(long usuarioId)
         {
-            List<Evento> eventos = db.Evento.Include("Convidados").Include("Convidados.Usuario").Where(x => x.Criador.Id == usuarioId).ToList();
-            eventos.AddRange(db.Evento.Include("Convidados").Include("Convidados.Usuario").Where(x => x.Convidados.Any(y => y.Usuario.Id == usuarioId) && x.Criador.Id != usuarioId).ToList());
+            List<Evento> eventos = db.Evento.Include("Criador").Include("Convidados").Include("Convidados.Usuario").Where(x => x.Criador.Id == usuarioId).ToList();
+            eventos.AddRange(db.Evento.Include("Criador").Include("Convidados").Include("Convidados.Usuario").Where(x => x.Convidados.Any(y => y.Usuario.Id == usuarioId) && x.Criador.Id != usuarioId).ToList());
             List<EventoDTO> eventosDTO = new List<EventoDTO>();
 
             foreach (var evento in eventos)
@@ -100,7 +100,10 @@ namespace GestaoEventos.Controllers
             var usuariosIndisponiveis = db.Evento.Include("Convidados").Include("Convidados.Usuario")
                 .Where(x => x.Id != eventoId
                 && dataInicial <= x.DataFinal
-                && dataFinal >= x.DataInicial).Select(x => x.Convidados.Where(y => usuarios.Contains(y.Usuario.Id)));
+                && dataFinal >= x.DataInicial).Select(x => x.Convidados.Where(y => usuarios.Contains(y.Usuario.Id) || usuarios.Contains(x.Criador.Id)).Select(y => y.Usuario.Nome));
+            
+            if (usuariosIndisponiveis.Count() > 0)
+                return false;
             return true;
         }
 
@@ -120,7 +123,18 @@ namespace GestaoEventos.Controllers
                 if (!string.IsNullOrEmpty(validacao))
                     throw new Exception(validacao);
 
-                AvaliarDisponibilidadeConvidados(evento.Id, eventoDTO.Convidados, eventoDTO.start, eventoDTO.end);
+                List<long> listaIds = new List<long>();
+                if (eventoDTO.Convidados != null)
+                {
+                    foreach (var convidadoId in eventoDTO.Convidados)
+                    {
+                        listaIds.Add(convidadoId);
+                    }
+                }
+                listaIds.Add(eventoDTO.CriadorId);
+                if (AvaliarDisponibilidadeConvidados(evento.Id, listaIds, eventoDTO.start, eventoDTO.end) == false) {
+                    throw new Exception("Alguns usuários já possuem eventos no horário fornecido.");
+                };
 
                 evento.TituloCompromisso = eventoDTO.title;
                 evento.Descricao = eventoDTO.Descricao;
